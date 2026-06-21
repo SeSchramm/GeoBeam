@@ -100,7 +100,7 @@ See the commented examples at the bottom of the script for additional usage patt
 | `x_f3_irl` | `float` | Optional: in-real-life measured X_Beam for comparison, can be used to test other coordinates in relation to Beam F3 |
 | `y_f3_irl` | `float` | Optional: in-real-life measured Y_Beam for comparison, can be used to test other coordinates in relation to Beam F3 |
 | `decimation_factor` | `float` | Mesh decimation (0–0.9); 0 disables decimation, 0.9 removes 90% of polygons |
-| `calculate_distances` | `bool` | Compute and export standard reference distances (Tr-Tr, Nz-Iz, Circumference, R1, R2) |
+| `calculate_distances` | `bool` | Compute and export standard reference distances (Tr-Tr, Nz-Iz, Circumference) |
 | `calculate_beam_f3` | `bool` | Compute and export Beam_F3 and Ref_Beam_F3 coordinates |
 | `calculate_vertex_Real` | `bool` | Compute and export the geodesic vertex (Vertex_Real) |
 | `determine_geo_electrodes` | `bool` | Compute geodesic-based 10-20 electrode positions for QA |
@@ -114,11 +114,11 @@ All output files are written to `<m2m_dir>/measurements/` and `<m2m_dir>/visuali
 
 | File | Contents |
 |---|---|
-| `reference_distances.csv` | Tr-Tr, Nz-Cz_AP-Iz, Circ, R1, R2, and Vertex_Real distances (mm) |
+| `reference_distances.csv` | Tr-Tr, Nz-Cz_AP-Iz, Circ distances (mm) |
 | `beam_f3_coordinates.csv` | 3D coordinates of Beam_F3 and Ref_Beam_F3 |
-| `vertex_real_coordinates.csv` | 3D coordinates of Vertex_Real, Cz_AP, LPA, RPA |
-| `vertex_real_distances.csv` | Geodesic distances from Vertex_Real to LPA and RPA |
-| `geo_electrodes_coordinates.csv` | Geodesic-based electrode positions (if `determine_geo_electrodes=True`) |
+| `vertex_real_coordinates.csv` | 3D coordinates of Vertex_Real |
+| `vertex_real_distances.csv` | Geodesic distances from Vertex_Real to other reference points |
+| `geo_electrodes_coordinates.csv` | Geodesic-based electrode positions according to the 10-10 system (if `determine_geo_electrodes=True`) |
 | `f3_all_coordinates.csv` | Comparison table of F3_csv, F3_Geo, Beam_F3, Beam_F3_irl and their reference points |
 | `visualizations/*.png` | Screenshot renders of key paths and points |
 
@@ -129,7 +129,7 @@ All output files are written to `<m2m_dir>/measurements/` and `<m2m_dir>/visuali
 The script implements the following steps:
 
 1. **Scalp extraction**: The scalp surface (gmsh physical group 5) is extracted from the SimNIBS head mesh and repaired using PyMeshFix (with Open3D Poisson reconstruction as fallback for severely damaged meshes).
-2. **Geodesic computation**: All surface distances are computed as true geodesic distances on the triangulated scalp mesh using the `pygeodesic` library (Mitchell–Mount–Papadimitriou algorithm).
+2. **Geodesic computation**: All surface distances are computed as true geodesic distances on the triangulated scalp mesh using the `pygeodesic` library ("https://github.com/mhogg/pygeodesic").
 3. **Cz_AP localization**: The anatomically corrected midpoint (Cz_AP) along the Nasion–Inion arc is found by bisecting the total geodesic Nz–Iz path length.
 4. **Vertex_Real localization**: The true geodesic midpoint of the Tragus–Tragus arc (LPA–RPA) through Cz_AP.
 5. **Reference distances**: Standard cranial distances (Tr-Tr, Nz-Iz, Circumference) are computed geodesically.

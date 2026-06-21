@@ -1,5 +1,7 @@
 [README.md](https://github.com/user-attachments/files/29177678/README.md)
 
+# GeoBeam 
+# A tool for individualized post hoc determination of the Beam F3 TMS target
 
 ---
 

@@ -70,8 +70,8 @@ from GeoBeam import run_all
 
 # Using subject-specific X/Y coordinates
 subject_coords = {
-    'sub-DEP001': {'x_f3_geo': 65.9, 'y_f3_geo': 91.8, 'x_f3_irl': 66.8, 'y_f3_irl': 99.3},
-    'sub-DEP002': {'x_f3_geo': 67.2, 'y_f3_geo': 92.1, 'x_f3_irl': 68.1, 'y_f3_irl': 99.8},
+    'sub-001': {'x_f3_geo': 65.9, 'y_f3_geo': 91.8, 'x_f3_irl': 66.8, 'y_f3_irl': 99.3},
+    'sub-002': {'x_f3_geo': 67.2, 'y_f3_geo': 92.1, 'x_f3_irl': 68.1, 'y_f3_irl': 99.8},
 }
 
 run_all(

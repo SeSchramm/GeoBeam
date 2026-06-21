@@ -95,8 +95,8 @@ See the commented examples at the bottom of the script for additional usage patt
 |---|---|---|
 | `mesh_file` | `str` | Path to the SimNIBS `.msh` head mesh file |
 | `m2m_dir` | `str` | Path to the SimNIBS `m2m_*` directory |
-| `x_f3_geo` | `float` | X_Beam distance (mm): distance from T7 along the EB–T7 path |
-| `y_f3_geo` | `float` | Y_Beam distance (mm): distance from Off_Mid_F3 towards Vertex_Real |
+| `x_f3_geo` | `float` | X_Beam distance (mm): distance from EB along the EB–T7 path |
+| `y_f3_geo` | `float` | Y_Beam distance (mm): distance from Vertex_Real towards Off_Mid_F3 |
 | `x_f3_irl` | `float` | Optional: in-real-life measured X_Beam for comparison, can be used to test other coordinates in relation to Beam F3 |
 | `y_f3_irl` | `float` | Optional: in-real-life measured Y_Beam for comparison, can be used to test other coordinates in relation to Beam F3 |
 | `decimation_factor` | `float` | Mesh decimation (0–0.9); 0 disables decimation, 0.9 removes 90% of polygons |

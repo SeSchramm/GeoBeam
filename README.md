@@ -5,6 +5,16 @@
 
 ---
 
+### ⚠️ Important notice for users of v0.1.x
+
+Versions up to and including **v0.1.1** contained a defect in which `measurements/beam_f3_coordinates.csv` was overwritten with the **Beam_F3_irl** result whenever `x_f3_irl` and `y_f3_irl` were supplied — the irl coordinates were written under the `Beam_F3` / `Ref_Beam_F3` labels, with nothing to indicate the substitution. Runs using only `x_f3_geo` / `y_f3_geo` are unaffected.
+
+**To check existing output:** `f3_coordinates.csv` is written before the irl calculation and still holds the correct geodesic coordinates. 
+If it disagrees with `beam_f3_coordinates.csv` for a subject, that subject is affected.
+`f3_all_coordinates.csv`, `beam_f3_irl_coordinates.csv` and `ref_points_coordinates.csv` are correct in all versions.
+
+Fixed in v0.2.0. See [CHANGELOG.md](CHANGELOG.md).
+
 ## Requirements
 
 ### Software dependencies
@@ -45,7 +55,11 @@ These files are generated automatically by the SimNIBS `charm` segmentation pipe
 
 ## Usage
 
-The main entry point is `run_all()`, which processes one or more subjects in batch. Edit the `base_path` variable inside `run_all()` to point to your data directory, then call the function from the Python interpreter or by appending a call at the end of the script.
+The main entry point is `run_all()`, which processes one or more subjects in
+batch. Pass the root of your SimNIBS output tree as `base_path`; it must contain
+one directory per subject named `sub-001`, `sub-002`, ..., each holding an
+`m2m_sub-XXX` directory. `run_all()` returns `(processed, failed)` and prints a
+summary of any subjects that failed.
 Importantly, in the current script iteration, a two-step run process is required. One initial run is performed to compute the anatomical distances, which are exported into the "measurements" directory. In the current script, these measurements need to be used in the online Beam F3 tool ("https://clinicalresearcher.org/F3/") to calculate x and y distances. These can then be used as input for a second run of the script which outputs the final Beam F3 target.
 
 ### Minimal example (single subject)
@@ -70,15 +84,15 @@ main(
 ```python
 from GeoBeam import run_all
 
-# Using subject-specific X/Y coordinates
 subject_coords = {
     'sub-001': {'x_f3_geo': 65.9, 'y_f3_geo': 91.8, 'x_f3_irl': 66.8, 'y_f3_irl': 99.3},
     'sub-002': {'x_f3_geo': 67.2, 'y_f3_geo': 92.1, 'x_f3_irl': 68.1, 'y_f3_irl': 99.8},
 }
 
-run_all(
+processed, failed = run_all(
     min_index=1,
     max_index=2,
+    base_path="/path/to/BIDS/derivatives/SimNIBS",
     subject_coordinates=subject_coords,
     decimation_factor=0,
     calculate_distances=True,
@@ -104,9 +118,10 @@ See the commented examples at the bottom of the script for additional usage patt
 | `decimation_factor` | `float` | Mesh decimation (0–0.9); 0 disables decimation, 0.9 removes 90% of polygons |
 | `calculate_distances` | `bool` | Compute and export standard reference distances (Tr-Tr, Nz-Iz, Circumference) |
 | `calculate_beam_f3` | `bool` | Compute and export Beam_F3 and Ref_Beam_F3 coordinates |
-| `calculate_vertex_Real` | `bool` | Compute and export the geodesic vertex (Vertex_Real) |
+| `calculate_vertex_Real`    | `bool`  | Compute and export the geodesic vertex (Vertex_Real). Required when `calculate_beam_f3=True`  |
 | `determine_geo_electrodes` | `bool` | Compute geodesic-based 10-20 electrode positions for QA |
-| `geo_off_screen` | `bool` | Save visualizations as screenshots instead of interactive display |
+| `geo_off_screen` | `bool` | Save visualizations as screenshots instead of interactive display | `visualize_beam_f3_plot`   | `bool`  | Render the Beam_F3 path visualisation (default `False`)                                       |
+| `beam_f3_off_screen`       | `bool`  | Save that visualisation as a PNG instead of opening an interactive window (default `True`)     |
 
 ---
 
@@ -122,7 +137,10 @@ All output files are written to `<m2m_dir>/measurements/` and `<m2m_dir>/visuali
 | `vertex_real_distances.csv` | Geodesic distances from Vertex_Real to other reference points |
 | `geo_electrodes_coordinates.csv` | Geodesic-based electrode positions according to the 10-10 system (if `determine_geo_electrodes=True`) |
 | `f3_all_coordinates.csv` | Comparison table of F3_csv, F3_Geo, Beam_F3, Beam_F3_irl and their reference points |
-| `visualizations/*.png` | Screenshot renders of key paths and points |
+| `visualizations/*.png` | Screenshot renders of key paths and points 
+| `f3_coordinates.csv`             | 3D coordinates of Beam_F3 (legacy name, retained for compatibility)                                   |
+| `beam_f3_irl_coordinates.csv`    | 3D coordinates of Beam_F3_irl and Ref_Beam_F3_irl (if `x_f3_irl`/`y_f3_irl` supplied)                 |
+| `ref_points_coordinates.csv`     | Reference direction points for F3_csv, F3_Geo, Beam_F3 and Beam_F3_irl                                |
 
 ---
 
